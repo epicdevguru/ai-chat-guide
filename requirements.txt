@@ -2,5 +2,6 @@ pypdf
 langchain
 openai
 langchain-chroma
+langchain-openai
 tiktoken
 pysqlite3-binary
