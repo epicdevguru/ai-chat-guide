@@ -40,7 +40,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 texts = text_splitter.split_documents(pages)
 print(texts[0])
 embeddings_model = OpenAIEmbeddings()
-db = Chroma.from_documents(texts, embeddings_model, persist_directory="./chroma.db")
+db = Chroma.from_documents(texts, embeddings_model)
 
 @dataclass
 class Message:
