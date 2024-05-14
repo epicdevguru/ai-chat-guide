@@ -38,11 +38,6 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 texts = text_splitter.split_documents(pages)
-print(texts[0])
-print(texts[1])
-print(texts[2])
-print(texts[3])
-print(texts[4])
 embeddings_model = OpenAIEmbeddings()
 db = Chroma.from_documents(texts, embeddings_model, persist_directory="./chroma.db")
 
@@ -56,11 +51,11 @@ ASSISTANT = "ai"
 MESSAGES = "messages"
 
 def get_llm() -> ChatOpenAI:
-    return ChatOpenAI(model_name="gpt-3.5-turbo",temperature=0)
+    return ChatOpenAI(model_name="gpt-4o",temperature=0)
 
 def initialize_session_state():
     if MESSAGES not in st.session_state:
-        st.session_state[MESSAGES] = [Message(actor=ASSISTANT, payload="Hi! How can I help you?")]
+        st.session_state[MESSAGES] = [Message(actor=ASSISTANT, payload="halo welcome to galeri indonesia kaya, my name is ika")]
     if "llm_chain" not in st.session_state:
         st.session_state["llm_chain"] = RetrievalQA.from_chain_type(get_llm(), retriever=db.as_retriever())#get_llm_chain()
 
