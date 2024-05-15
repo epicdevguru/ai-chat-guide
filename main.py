@@ -26,7 +26,7 @@ import streamlit as st;
 st.title("Chat AI agent")
 st.write("---")
 
-loader = PyPDFLoader("Tourism_1.pdf")
+loader = PyPDFLoader("Tourism_2.pdf")
 pages = loader.load_and_split()
 
 text_splitter = RecursiveCharacterTextSplitter(
