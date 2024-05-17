@@ -55,7 +55,7 @@ def get_llm() -> ChatOpenAI:
 
 def initialize_session_state():
     if MESSAGES not in st.session_state:
-        st.session_state[MESSAGES] = [Message(actor=ASSISTANT, payload="halo welcome to galeri indonesia kaya, my name is ika")]
+        st.session_state[MESSAGES] = [Message(actor=ASSISTANT, payload="Hai! Saya Ika, selamat datang di Galeri Indonesia Kaya. Butuh info tentang Indonesia? Tanya saja! Saya siap membantu.")]
     if "llm_chain" not in st.session_state:
         st.session_state["llm_chain"] = RetrievalQA.from_chain_type(get_llm(), retriever=db.as_retriever())#get_llm_chain()
 
