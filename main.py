@@ -26,7 +26,7 @@ import streamlit as st;
 st.title("Chat AI agent")
 st.write("---")
 
-loader = PyPDFLoader("Tourism_3.pdf")
+loader = PyPDFLoader("vertopal.com_gikAiJSONFile.pdf")
 pages = loader.load_and_split()
 
 text_splitter = RecursiveCharacterTextSplitter(
