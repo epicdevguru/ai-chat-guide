@@ -32,8 +32,8 @@ with open("gikAiJSONFile.json", "r", encoding='utf-8') as f:
         data = data[1:]
 jsonData = json.loads(data)
 embedding_function = OpenAIEmbeddings()
-documents = [Document(page_content=item, metadata={"source": "gikAiJSONFile.json", "category": "Indonesian Dishes", "language": "Indonesian"}) for item in jsonData["dishes"]]
-db = Chroma.from_documents(documents, embedding_function, persist_directory="./chroma.db")
+documents = [Document(page_content=item, metadata={"source": "gikAiJSONFile.json"}) for item in jsonData["dishes"]]
+db = Chroma.from_documents(documents, embedding_function)
 
 # loader = PyPDFLoader("vertopal.com_gikAiJSONFile.pdf")
 # pages = loader.load_and_split()
