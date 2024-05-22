@@ -16,6 +16,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
+from langchain.docstore.document import Document
 #from langchain.chains import LLMChain
 
 import json
@@ -31,7 +32,8 @@ with open("gikAiJSONFile.json", "r", encoding='utf-8') as f:
         data = data[1:]
 jsonData = json.loads(data)
 embedding_function = OpenAIEmbeddings()
-db = Chroma.from_documents(jsonData["dishes"], embedding_function, persist_directory="./chroma.db")
+documents = [Document(page_content=item, metadata={"source": "gikAiJSONFile.json", "category": "Indonesian Dishes", "language": "Indonesian"}) for item in jsonData["dishes"]]
+db = Chroma.from_documents(documents, embedding_function, persist_directory="./chroma.db")
 
 # loader = PyPDFLoader("vertopal.com_gikAiJSONFile.pdf")
 # pages = loader.load_and_split()
