@@ -16,30 +16,37 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
-from langchain.chains import LLMChain
-from langchain.memory import ConversationBufferMemory
-from langchain.prompts import PromptTemplate
+#from langchain.chains import LLMChain
 
+import json
 import streamlit as st;
 
 
 st.title("Chat AI agent")
 st.write("---")
 
-loader = PyPDFLoader("vertopal.com_gikAiJSONFile.pdf")
-pages = loader.load_and_split()
+with open("gikAiJSONFile.json", "r", encoding='utf-8') as f:
+    data = f.read()
+    if data.startswith('\ufeff'):
+        data = data[1:]
+jsonData = json.loads(data)
+embedding_function = OpenAIEmbeddings()
+db = Chroma.from_documents(jsonData, embedding_function)
 
-text_splitter = RecursiveCharacterTextSplitter(
-    # Set a really small chunk size, just to show.
-    chunk_size=300,
-    chunk_overlap=20,
-    length_function=len,
-    is_separator_regex=False,
-)
+# loader = PyPDFLoader("vertopal.com_gikAiJSONFile.pdf")
+# pages = loader.load_and_split()
 
-texts = text_splitter.split_documents(pages)
-embeddings_model = OpenAIEmbeddings()
-db = Chroma.from_documents(texts, embeddings_model, persist_directory="./chroma.db")
+# text_splitter = RecursiveCharacterTextSplitter(
+#     # Set a really small chunk size, just to show.
+#     chunk_size=300,
+#     chunk_overlap=20,
+#     length_function=len,
+#     is_separator_regex=False,
+# )
+
+# texts = text_splitter.split_documents(pages)
+# embeddings_model = OpenAIEmbeddings()
+# db = Chroma.from_documents(texts, embeddings_model, persist_directory="./chroma.db")
 
 @dataclass
 class Message:
