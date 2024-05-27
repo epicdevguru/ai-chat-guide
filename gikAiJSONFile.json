@@ -3294,6 +3294,128 @@
     },
     "history": "Papeda is a traditional dish with a long history in Papua and Maluku. It is made from sago, which is low in sugar and cholesterol, and high in fiber and nutrients. It has been a staple in various cultural ceremonies and daily life in these regions.",
     "additional_info": "Papeda is often enjoyed with additional side dishes such as sayur ganemo, ikan, and sambal. It is best served warm as it tends to harden when cooled."
+  },
+  {
+    "dish_name": "Naniura",
+    "origin": [
+      "Toba",
+      "Danau Toba",
+      "Tapanuli Utara",
+      "Pulau Samosir",
+      "Humbang Hasundutan",
+      "Sumatra Utara",
+      "Indonesia"
+    ],
+    "cultural_significance": "Hidangan tradisional Batak, mirip dengan sashimi, secara historis dihormati dan sering disajikan sebagai persembahan kerajaan.",
+    "description": "Ikan mas segar yang dimarinasi dengan air jeruk jungga dan rempah-rempah yang membuat ikan matang tanpa panas.",
+    "key_flavors": [
+      "Asam",
+      "Gurih",
+      "Segar"
+    ],
+    "traditional_ingredients": [
+      "Ikan mas atau nila segar",
+      "Andaliman",
+      "Jeruk jungga",
+      "Bawang merah",
+      "Cabai merah",
+      "Bawang putih",
+      "Kunyit",
+      "Kemiri",
+      "Jahe",
+      "Lengkuas",
+      "Kecombrang"
+    ],
+    "unique_ingredients": [
+      {
+        "ingredient": "Andaliman",
+        "description": "Menambahkan rasa dan meningkatkan kekebalan tubuh dengan vitamin C dan E."
+      },
+      {
+        "ingredient": "Jeruk Jungga",
+        "description": "Penting untuk mematangkan ikan dan menghilangkan bau amis; lebih kecil dan bulat daripada jeruk purut."
+      },
+      {
+        "ingredient": "Kecombrang",
+        "description": "Menambahkan aroma khas dan membantu mengurangi bau amis pada ikan."
+      }
+    ],
+    "preparation_time": "4 hingga 6 jam untuk marinasi",
+    "serving": "Biasanya disajikan sebagai hidangan utama, sering ditemukan di lapo (rumah makan Batak) dan restoran Batak.",
+    "recipe_availability": "Umum dalam masakan Batak, baik di rumah maupun di restoran.",
+    "recipe_details": {
+      "ingredients": [
+        {
+          "item": "Ikan mas",
+          "quantity": "1 ekor (1 kg)",
+          "note": "bersihkan"
+        },
+        {
+          "item": "Garam",
+          "quantity": "2 sdt"
+        },
+        {
+          "item": "Air jeruk jungga",
+          "quantity": "10 sdm"
+        }
+      ],
+      "sambal": [
+        {
+          "item": "Kecombrang, kukus hingga lembut",
+          "quantity": "150 gr"
+        },
+        {
+          "item": "Andaliman",
+          "quantity": "1½ sdm"
+        },
+        {
+          "item": "Garam",
+          "quantity": "½ sdt"
+        }
+      ],
+      "roasted_spices": [
+        {
+          "item": "Bawang merah",
+          "quantity": "150 gr"
+        },
+        {
+          "item": "Kemiri",
+          "quantity": "50 gr"
+        },
+        {
+          "item": "Kacang tanah tanpa kulit",
+          "quantity": "50 gr"
+        },
+        {
+          "item": "Cabai merah keriting",
+          "quantity": "15 buah"
+        },
+        {
+          "item": "Jahe",
+          "quantity": "3 cm"
+        },
+        {
+          "item": "Kunyit",
+          "quantity": "3 cm"
+        }
+      ],
+      "preparation_steps": [
+        {
+          "step": "Belah bagian punggung ikan tidak sampai putus sehingga berbentuk melebar. Buang duri yang menempel pada daging ikan."
+        },
+        {
+          "step": "Letakkan ikan dalam piring saji, lumuri dengan 6 sdm air jeruk jungga. Bungkus dengan plastic wrap, simpan dalam kulkas selama 6 jam. Sisihkan."
+        },
+        {
+          "step": "Sambal: Gerus halus kecombrang, andaliman, garam, dan bumbu sangrai. Tambahkan sisa air jeruk jungga, aduk rata."
+        },
+        {
+          "step": "Keluarkan ikan dari kulkas, olesi dengan sambal. Sajikan dingin."
+        }
+      ]
+    },
+    "history": "Naniura adalah hidangan khas Batak Toba yang dikenal sejak zaman dahulu. Awalnya, hidangan ini merupakan sajian istimewa yang kerap dijadikan persembahan untuk para raja dan tidak sembarang orang bisa membuatnya. Kelezatan naniura bahkan telah mengilhami sebuah lagu daerah berjudul Tabo Do Dekke Naniura, yang berarti 'Ikan yang diasami itu rasanya enak.'",
+    "additional_info": "Naniura berarti 'ikan yang tidak dimasak' dalam bahasa Batak. Meskipun tidak dimasak, ikan dalam hidangan ini tidak berbau amis berkat penggunaan air jeruk jungga yang sangat asam, yang juga membuat duri-duri halus pada ikan menjadi lembut. Proses pembuatan naniura memakan waktu sekitar 4 hingga 6 jam untuk memastikan ikan matang merata melalui marinasi."
   }
 ]
 }
