@@ -23,7 +23,7 @@ from pathlib import Path
 from openai import OpenAI
 import json
 import streamlit as st
-import base64
+import io
 
 st.title("Chat AI agent")
 st.write("---")
@@ -80,13 +80,10 @@ if prompt:
             voice="alloy",
             input=dataResponse,
         )
-        with open("output.mp3", "wb") as f:
-            f.write(response.content)
         
         st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
         st.chat_message(ASSISTANT).write(dataResponse)
 
-        # Embed and play the audio file in Streamlit
-        audio_file = open("output.mp3", "rb")
-        audio_bytes = audio_file.read()
+        # Play the audio directly from the binary content
+        audio_bytes = io.BytesIO(response.content)
         st.audio(audio_bytes, format="audio/mp3")
