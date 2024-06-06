@@ -77,7 +77,7 @@ if prompt:
         dataResponse: str = llm_chain({"query": prompt})["result"]
         response = client.audio.speech.create(
             model="tts-1",
-            voice="alloy",
+            voice="nova",
             input=dataResponse,
         )
         
