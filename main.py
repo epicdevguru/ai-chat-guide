@@ -17,6 +17,9 @@ from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.docstore.document import Document
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from pathlib import Path
 from openai import OpenAI
 #from langchain.chains import LLMChain
@@ -95,7 +98,7 @@ if prompt:
         response = client.audio.speech.create(
             model="tts-1",
             voice="alloy",
-            input="Hello world! This is a streaming test.",
+            input=dataResponse,
         
         )
         response.stream_to_file("output.mp3")
