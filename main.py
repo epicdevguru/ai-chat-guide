@@ -17,6 +17,8 @@ from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.docstore.document import Document
+from pathlib import Path
+from openai import OpenAI
 #from langchain.chains import LLMChain
 
 import json
@@ -79,15 +81,27 @@ for msg in st.session_state[MESSAGES]:
 
 prompt: str = st.chat_input("Enter a prompt here")
 
+client = OpenAI()
+
+speech_file_path = Path(__file__).parent / "speech.mp3"
+
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
     st.chat_message(USER).write(prompt)
 
     with st.spinner("Please wait..."):
         llm_chain = get_llm_chain_from_session()
-        response: str = llm_chain({"query": prompt})["result"]
-        st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=response))
-        st.chat_message(ASSISTANT).write(response)
+        dataResponse: str = llm_chain({"query": prompt})["result"]
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="alloy",
+            input="Hello world! This is a streaming test.",
+        
+        )
+        response.stream_to_file("output.mp3")
+        st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
+        st.chat_message(ASSISTANT).write(dataResponse)
+        
 
 
 # question = st.text_input('Ask a question.')#"What is the content of this document?"
