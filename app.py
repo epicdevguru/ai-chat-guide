@@ -24,8 +24,9 @@ from openai import OpenAI
 import json
 import streamlit as st
 import io
-import sounddevice as sd
-import wavio
+from pydub import AudioSegment
+import ffmpeg
+from tempfile import NamedTemporaryFile
 
 st.title("Chat AI agent")
 st.write("---")
@@ -68,13 +69,33 @@ for msg in st.session_state[MESSAGES]:
 
 client = OpenAI()
 
-# Function to record audio using sounddevice and save it to a file
+# Function to record audio using pydub and save it to a file
 def record_audio(file_path, duration=5, fs=44100):
+    import pyaudio
+    import wave
+
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paInt16, channels=1, rate=fs, input=True, frames_per_buffer=1024)
+    frames = []
+
     st.write("Recording...")
-    recording = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='int16')
-    sd.wait()  # Wait until recording is finished
-    wavio.write(file_path, recording, fs, sampwidth=2)
+
+    for _ in range(0, int(fs / 1024 * duration)):
+        data = stream.read(1024)
+        frames.append(data)
+
     st.write("Recording completed.")
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+    wf = wave.open(file_path, 'wb')
+    wf.setnchannels(1)
+    wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
+    wf.setframerate(fs)
+    wf.writeframes(b''.join(frames))
+    wf.close()
 
 # Function to recognize speech using the OpenAI API
 def recognize_speech_with_openai(audio_path):
