@@ -24,6 +24,8 @@ from openai import OpenAI
 import json
 import streamlit as st
 import io
+import pyaudio
+import wave
 
 st.title("Chat AI agent")
 st.write("---")
@@ -64,17 +66,68 @@ msg: Message
 for msg in st.session_state[MESSAGES]:
     st.chat_message(msg.actor).write(msg.payload)
 
-prompt: str = st.chat_input("Enter a prompt here")
-
 client = OpenAI()
 
-audio_file = open("/audios/speech.mp3", "rb")
-transcription = client.audio.transcriptions.create(
-  model="whisper-1", 
-  file=audio_file, 
-  response_format="text"
-)
-print(transcription.text)
+# Function to record audio from the microphone and save it to a file
+def record_audio(file_path):
+    chunk = 1024  # Record in chunks of 1024 samples
+    sample_format = pyaudio.paInt16  # 16 bits per sample
+    channels = 1
+    rate = 44100  # Record at 44100 samples per second
+    record_seconds = 5
+    p = pyaudio.PyAudio()  # Create an interface to PortAudio
+
+    st.write("Recording...")
+
+    stream = p.open(format=sample_format,
+                    channels=channels,
+                    rate=rate,
+                    frames_per_buffer=chunk,
+                    input=True)
+
+    frames = []  # Initialize array to store frames
+
+    # Store data in chunks for 5 seconds
+    for _ in range(0, int(rate / chunk * record_seconds)):
+        data = stream.read(chunk)
+        frames.append(data)
+
+    # Stop and close the stream
+    stream.stop_stream()
+    stream.close()
+    # Terminate the PortAudio interface
+    p.terminate()
+
+    st.write("Recording completed.")
+
+    # Save the recorded data as a WAV file
+    wf = wave.open(file_path, 'wb')
+    wf.setnchannels(channels)
+    wf.setsampwidth(p.get_sample_size(sample_format))
+    wf.setframerate(rate)
+    wf.writeframes(b''.join(frames))
+    wf.close()
+
+# Function to recognize speech using the OpenAI API
+def recognize_speech_with_openai(audio_path):
+    audio_file = open(audio_path, "rb")
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file,
+        response_format="text"
+    )
+    return transcription['text']
+
+prompt: str = st.chat_input("Enter a prompt here or use the microphone")
+
+# Add a button to capture speech input
+if st.button("Record from Microphone"):
+    audio_file_path = "speech.mp3"
+    record_audio(audio_file_path)
+    speech_text = recognize_speech_with_openai(audio_file_path)
+    if speech_text:
+        prompt = speech_text
+        st.write(f"Recognized text: {prompt}")
 
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
@@ -85,7 +138,7 @@ if prompt:
         dataResponse: str = llm_chain({"query": prompt})["result"]
         response = client.audio.speech.create(
             model="tts-1",
-            voice="nova",
+            voice="alloy",
             input=dataResponse,
         )
         
