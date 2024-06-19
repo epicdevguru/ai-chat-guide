@@ -7,4 +7,3 @@ langchain-openai
 tiktoken
 pysqlite3-binary
 dataclasses
-pyaudio
