@@ -23,7 +23,9 @@ from pathlib import Path
 from openai import OpenAI
 import json
 import streamlit as st
-import base64
+import io
+import sounddevice as sd
+import wavio
 
 st.title("Chat AI agent")
 st.write("---")
@@ -64,9 +66,36 @@ msg: Message
 for msg in st.session_state[MESSAGES]:
     st.chat_message(msg.actor).write(msg.payload)
 
-prompt: str = st.chat_input("Enter a prompt here")
-
 client = OpenAI()
+
+# Function to record audio using sounddevice and save it to a file
+def record_audio(file_path, duration=5, fs=44100):
+    st.write("Recording...")
+    recording = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='int16')
+    sd.wait()  # Wait until recording is finished
+    wavio.write(file_path, recording, fs, sampwidth=2)
+    st.write("Recording completed.")
+
+# Function to recognize speech using the OpenAI API
+def recognize_speech_with_openai(audio_path):
+    audio_file = open(audio_path, "rb")
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file,
+        response_format="text"
+    )
+    return transcription['text']
+
+prompt: str = st.chat_input("Enter a prompt here or use the microphone")
+
+# Add a button to capture speech input
+if st.button("Record from Microphone"):
+    audio_file_path = "speech.wav"
+    record_audio(audio_file_path)
+    speech_text = recognize_speech_with_openai(audio_file_path)
+    if speech_text:
+        prompt = speech_text
+        st.write(f"Recognized text: {prompt}")
 
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
@@ -80,13 +109,10 @@ if prompt:
             voice="alloy",
             input=dataResponse,
         )
-        with open("output.mp3", "wb") as f:
-            f.write(response.content)
         
         st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
         st.chat_message(ASSISTANT).write(dataResponse)
 
-        # Embed and play the audio file in Streamlit
-        audio_file = open("output.mp3", "rb")
-        audio_bytes = audio_file.read()
+        # Play the audio directly from the binary content
+        audio_bytes = io.BytesIO(response.content)
         st.audio(audio_bytes, format="audio/mp3")
