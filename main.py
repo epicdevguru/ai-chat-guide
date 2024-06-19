@@ -68,6 +68,14 @@ prompt: str = st.chat_input("Enter a prompt here")
 
 client = OpenAI()
 
+audio_file = open("/audios/speech.mp3", "rb")
+transcription = client.audio.transcriptions.create(
+  model="whisper-1", 
+  file=audio_file, 
+  response_format="text"
+)
+print(transcription.text)
+
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
     st.chat_message(USER).write(prompt)
