@@ -24,6 +24,9 @@ from openai import OpenAI
 import json
 import streamlit as st
 import io
+from streamlit_webrtc import webrtc_streamer, WebRtcMode, AudioProcessorBase
+import soundfile as sf
+import numpy as np
 
 st.title("Chat AI agent")
 st.write("---")
@@ -67,6 +70,62 @@ for msg in st.session_state[MESSAGES]:
 prompt: str = st.chat_input("Enter a prompt here")
 
 client = OpenAI()
+
+# AudioProcessor class for WebRTC
+class AudioProcessor(AudioProcessorBase):
+    def __init__(self):
+        self.audio_frames = []
+
+    def recv(self, frame):
+        self.audio_frames.append(frame.to_ndarray().flatten())
+        return frame
+
+def recognize_speech_with_openai(audio_bytes):
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_bytes,
+        response_format="text"
+    )
+    return transcription['text']
+
+webrtc_ctx = webrtc_streamer(
+    key="audio-recorder",
+    mode=WebRtcMode.SENDONLY,
+    audio_processor_factory=AudioProcessor,
+    async_processing=True,
+)
+
+if webrtc_ctx.state.playing:
+    st.write("Recording...")
+
+    if st.button("Stop Recording"):
+        if webrtc_ctx.audio_processor:
+            audio_frames = np.concatenate(webrtc_ctx.audio_processor.audio_frames)
+            audio_bytes = io.BytesIO()
+            sf.write(audio_bytes, audio_frames, 44100, format='wav')
+            audio_bytes.seek(0)
+            prompt = recognize_speech_with_openai(audio_bytes)
+            st.write(f"Recognized text: {prompt}")
+
+            if prompt:
+                st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
+                st.chat_message(USER).write(prompt)
+
+                with st.spinner("Please wait..."):
+                    llm_chain = get_llm_chain_from_session()
+                    dataResponse: str = llm_chain({"query": prompt})["result"]
+                    response = client.audio.speech.create(
+                        model="tts-1",
+                        voice="alloy",
+                        input=dataResponse,
+                    )
+                    
+                    st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
+                    st.chat_message(ASSISTANT).write(dataResponse)
+
+                    # Play the audio directly from the binary content
+                    audio_bytes = io.BytesIO(response.content)
+                    st.audio(audio_bytes, format="audio/mp3")
 
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))

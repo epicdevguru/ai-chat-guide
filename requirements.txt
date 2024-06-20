@@ -8,3 +8,4 @@ tiktoken
 pysqlite3-binary
 dataclasses
 streamlit-webrtc
+soundfile
