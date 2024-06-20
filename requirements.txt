@@ -7,5 +7,4 @@ langchain-openai
 tiktoken
 pysqlite3-binary
 dataclasses
-pydub
-ffmpeg-python
+streamlit-webrtc
