@@ -49,7 +49,8 @@ USER = "user"
 ASSISTANT = "ai"
 MESSAGES = "messages"
 
-def get_llm() -> ChatOpenAI:
+@st.cache(allow_output_mutation=True)
+def get_llm():
     return ChatOpenAI(model_name="gpt-4", temperature=0)
 
 def initialize_session_state():
@@ -100,32 +101,36 @@ if webrtc_ctx.state.playing:
 
     if st.button("Stop Recording"):
         if webrtc_ctx.audio_processor:
-            audio_frames = np.concatenate(webrtc_ctx.audio_processor.audio_frames)
-            audio_bytes = io.BytesIO()
-            sf.write(audio_bytes, audio_frames, 44100, format='wav')
-            audio_bytes.seek(0)
-            prompt = recognize_speech_with_openai(audio_bytes)
-            st.write(f"Recognized text: {prompt}")
+            audio_frames = webrtc_ctx.audio_processor.audio_frames
+            if audio_frames:
+                audio_frames = np.concatenate(audio_frames)
+                audio_bytes = io.BytesIO()
+                sf.write(audio_bytes, audio_frames, 44100, format='wav')
+                audio_bytes.seek(0)
+                prompt = recognize_speech_with_openai(audio_bytes)
+                st.write(f"Recognized text: {prompt}")
 
-            if prompt:
-                st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
-                st.chat_message(USER).write(prompt)
+                if prompt:
+                    st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
+                    st.chat_message(USER).write(prompt)
 
-                with st.spinner("Please wait..."):
-                    llm_chain = get_llm_chain_from_session()
-                    dataResponse: str = llm_chain({"query": prompt})["result"]
-                    response = client.audio.speech.create(
-                        model="tts-1",
-                        voice="alloy",
-                        input=dataResponse,
-                    )
-                    
-                    st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
-                    st.chat_message(ASSISTANT).write(dataResponse)
+                    with st.spinner("Please wait..."):
+                        llm_chain = get_llm_chain_from_session()
+                        dataResponse: str = llm_chain({"query": prompt})["result"]
+                        response = client.audio.speech.create(
+                            model="tts-1",
+                            voice="alloy",
+                            input=dataResponse,
+                        )
 
-                    # Play the audio directly from the binary content
-                    audio_bytes = io.BytesIO(response.content)
-                    st.audio(audio_bytes, format="audio/mp3")
+                        st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
+                        st.chat_message(ASSISTANT).write(dataResponse)
+
+                        # Play the audio directly from the binary content
+                        audio_bytes = io.BytesIO(response.content)
+                        st.audio(audio_bytes, format="audio/mp3")
+            else:
+                st.write("No audio frames captured. Please try recording again.")
 
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
@@ -139,7 +144,7 @@ if prompt:
             voice="alloy",
             input=dataResponse,
         )
-        
+
         st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
         st.chat_message(ASSISTANT).write(dataResponse)
 
