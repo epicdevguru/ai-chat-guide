@@ -49,7 +49,7 @@ USER = "user"
 ASSISTANT = "ai"
 MESSAGES = "messages"
 
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def get_llm():
     return ChatOpenAI(model_name="gpt-4", temperature=0)
 
