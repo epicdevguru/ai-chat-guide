@@ -51,7 +51,7 @@ MESSAGES = "messages"
 
 @st.cache_resource
 def get_llm():
-    return ChatOpenAI(model_name="gpt-4", temperature=0)
+    return ChatOpenAI(model_name="gpt-4o", temperature=0)
 
 def initialize_session_state():
     if MESSAGES not in st.session_state:
