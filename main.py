@@ -107,30 +107,35 @@ if webrtc_ctx.state.playing:
                 audio_bytes = io.BytesIO()
                 sf.write(audio_bytes, audio_frames, 44100, format='wav')
                 audio_bytes.seek(0)
-                prompt = recognize_speech_with_openai(audio_bytes)
-                st.write(f"Recognized text: {prompt}")
+                try:
+                    prompt = recognize_speech_with_openai(audio_bytes)
+                    st.write(f"Recognized text: {prompt}")
 
-                if prompt:
-                    st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
-                    st.chat_message(USER).write(prompt)
+                    if prompt:
+                        st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
+                        st.chat_message(USER).write(prompt)
 
-                    with st.spinner("Please wait..."):
-                        llm_chain = get_llm_chain_from_session()
-                        dataResponse: str = llm_chain({"query": prompt})["result"]
-                        response = client.audio.speech.create(
-                            model="tts-1",
-                            voice="alloy",
-                            input=dataResponse,
-                        )
+                        with st.spinner("Please wait..."):
+                            llm_chain = get_llm_chain_from_session()
+                            dataResponse: str = llm_chain({"query": prompt})["result"]
+                            response = client.audio.speech.create(
+                                model="tts-1",
+                                voice="alloy",
+                                input=dataResponse,
+                            )
 
-                        st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
-                        st.chat_message(ASSISTANT).write(dataResponse)
+                            st.session_state[MESSAGES].append(Message(actor=ASSISTANT, payload=dataResponse))
+                            st.chat_message(ASSISTANT).write(dataResponse)
 
-                        # Play the audio directly from the binary content
-                        audio_bytes = io.BytesIO(response.content)
-                        st.audio(audio_bytes, format="audio/mp3")
+                            # Play the audio directly from the binary content
+                            audio_bytes = io.BytesIO(response.content)
+                            st.audio(audio_bytes, format="audio/mp3")
+                except Exception as e:
+                    st.error(f"Error recognizing speech: {e}")
             else:
                 st.write("No audio frames captured. Please try recording again.")
+        else:
+            st.write("Audio processor not initialized. Please try again.")
 
 if prompt:
     st.session_state[MESSAGES].append(Message(actor=USER, payload=prompt))
